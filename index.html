@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f5fa;
+            color: #26334a;
+        }
+
+        header {
+            background: linear-gradient(135deg, #172554, #243b70);
+            color: white;
+            padding: 30px 8%;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #d6deef;
+        }
+
+        .container {
+            width: 85%;
+            margin: 35px auto;
+        }
+
+        .section-title {
+            margin: 30px 0 18px;
+            color: #172554;
+            font-size: 22px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #c9a44c;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card h3 {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #172554;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .table-box {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            overflow-x: auto;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #172554;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .success {
+            color: #16834a;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .grade {
+            background: #e8edf8;
+            color: #172554;
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .mercy {
+            border-left: 5px solid #c9a44c;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #172554;
+            color: white;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 92%;
+            }
+
+            header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Management System</h1>
+        <p>Academic Results & Student Performance Dashboard</p>
+    </header>
+
+    <div class="container">
+
+        <h2 class="section-title">Dashboard Overview</h2>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Total Students</h3>
+                <p id="totalStudents">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Successful Students</h3>
+                <p id="successfulStudents">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Students Needing Review</h3>
+                <p id="reviewStudents">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Mercy Average</h3>
+                <p id="mercyAverage">0</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">Students Academic Report</h2>
+
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student Name</th>
+                        <th>Average</th>
+                        <th>Grade</th>
+                        <th>Final Result</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTable"></tbody>
+            </table>
+        </div>
+
+        <h2 class="section-title">Mercy Committee Results</h2>
+
+        <div class="table-box mercy">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Old Average</th>
+                        <th>Mercy Marks</th>
+                        <th>New Average</th>
+                    </tr>
+                </thead>
+                <tbody id="mercyTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <footer>
+        Student Management System | Academic Analysis
+    </footer>
+
+    <script src="index.js"></script>
+
+    <script>
+        // Dashboard Statistics
+
+        document.getElementById("totalStudents").textContent =
+            studentsList.length;
+
+        document.getElementById("successfulStudents").textContent =
+            studentsList.filter(s => s.calculateResult() === "ناجح").length;
+
+        document.getElementById("reviewStudents").textContent =
+            studentsList.filter(s => s.calculateResult() === "يحتاج مراجعة").length;
+
+        document.getElementById("mercyAverage").textContent =
+            mercyAverage.toFixed(2);
+
+        // Students Table
+
+        studentsList.forEach(student => {
+            let row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.calculateAverage().toFixed(2)}</td>
+                <td><span class="grade">${student.calculateGrade()}</span></td>
+                <td class="${student.calculateResult() === 'ناجح' ? 'success' : 'warning'}">
+                    ${student.calculateResult()}
+                </td>
+            `;
+
+            document.getElementById("studentsTable").appendChild(row);
+        });
+
+        // Mercy Committee Table
+
+        mercyStudents.forEach(student => {
+            let row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${student.name}</td>
+                <td>${student.oldAverage.toFixed(2)}</td>
+                <td>+5</td>
+                <td class="success">${student.newAverage.toFixed(2)}</td>
+            `;
+
+            document.getElementById("mercyTable").appendChild(row);
+        });
+    </script>
+
+</body>
+</html>
